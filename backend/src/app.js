@@ -3,7 +3,7 @@ import cors from "cors"
 import cookieParser from "cookie-parser"
 import errorHandler from "./middlewares/error.middleware.js"
 import authRoutes from "./routes/auth.routes.js"
-import authMiddleware from "./middlewares/auth.middleware.js"
+import categoryRoutes from "./routes/category.routes.js"
 const app = express()
 
 
@@ -16,19 +16,8 @@ app.use(cookieParser())
 
 
 app.use("/api/auth",authRoutes)
+app.use("/api/category",categoryRoutes)
 
-app.get("/",(req,res)=>{
-    res.json({
-        success:true,
-        message:"Machine task api runnning"
-    })
-})
-app.get("/test",authMiddleware,(req,res)=>{
-    res.json({
-        success:true,
-        user:req.user
-    })
-})
 
 app.use(errorHandler)
 
