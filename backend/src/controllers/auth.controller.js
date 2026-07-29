@@ -1,5 +1,5 @@
-import { signupService } from "../services/auth.service.js";
-import { signupSchema } from "../validators/auth.validator.js";
+import { signupService , loginService } from "../services/auth.service.js";
+import { loginSchema, signupSchema } from "../validators/auth.validator.js";
 
 export const signup = async (req,res,next)=>{
     try {
@@ -14,5 +14,21 @@ export const signup = async (req,res,next)=>{
         })
     } catch (error) {
        next(error)
+    }
+}
+
+export const login = async (req,res,next)=>{
+    try {
+        const validatedData = loginSchema.parse(req.body)
+
+        const response = await loginService(validatedData)
+
+        res.status(200).json({
+            success:true,
+            message:"Login successfull",
+            data:response
+        })
+    } catch (error) {
+        next(error)
     }
 }

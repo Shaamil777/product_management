@@ -29,3 +29,27 @@ export const signupService = async({name,email,password})=>{
         token
     }
 }
+
+export const loginService = async({email,password})=>{
+    
+    const user = await User.findOne({email})
+    if(!user){
+        throw new Error("User is not registered")
+    }
+
+    const isMatch = await bcrypt.compare(password,user.password)
+
+    if(!isMatch){
+        throw new Error("Invalid password")
+    }
+
+    const token = generateToken(user._id)
+    return {
+        user:{
+            id:user._id,
+            name:user.name,
+            email:user.email
+        },
+        token
+    }
+}
