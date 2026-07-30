@@ -7,7 +7,6 @@ const api = axios.create({
   },
 });
 
-// Request interceptor to attach JWT token
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -21,13 +20,29 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor for error handling
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
-      // Optional: handle unauthorized access (e.g., redirect to login or clear storage)
-      localStorage.removeItem('token');
+    if (error.response) {
+      const status = error.response.status;
+      const msg = (error.response.data?.message || '').toLowerCase();
+      if (
+        status === 401 ||
+        msg.includes('token') ||
+        msg.includes('authorized') ||
+        msg.includes('auth') ||
+        msg.includes('login')
+      ) {
+        localStorage.removeItem('token');
+        if (error.response.data) {
+          error.response.data.message = 'Please login';
+        } else {
+          error.response = {
+            ...error.response,
+            data: { message: 'Please login' },
+          };
+        }
+      }
     }
     return Promise.reject(error);
   }

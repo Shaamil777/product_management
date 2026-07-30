@@ -138,13 +138,13 @@ export const updateProductService = async (id,productData,image)=>{
         throw new Error("Product already exists")
     }
 
-    variant.sort((a,b)=>a-b)
+    variants.sort((a,b)=>a.ram - b.ram)
 
     const ramSet = new Set()
 
     for(const variant of variants){
-        if(ramset.has(variant.ram)){
-            throw new Error(`Duplicate RAM variant:${variant.ram} GB`)
+        if(ramSet.has(variant.ram)){
+            throw new Error(`Duplicate RAM variant: ${variant.ram}`)
         }
         ramSet.add(variant.ram)
     }

@@ -5,12 +5,7 @@ export const getWishlist = async () => {
   return response.data;
 };
 
-export const addToWishlist = async (productId) => {
-  const response = await api.post('/wishlist', { productId });
-  return response.data;
-};
-
-export const removeFromWishlist = async (productId) => {
-  const response = await api.delete(`/wishlist/${productId}`);
+export const toggleWishlist = async (productId) => {
+  const response = await api.post(`/wishlist/${productId}`);
   return response.data;
 };

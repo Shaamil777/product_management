@@ -12,7 +12,6 @@ import AddProduct from '../pages/product/AddProduct';
 import EditProduct from '../pages/product/EditProduct';
 import Wishlist from '../pages/wishlist/Wishlist';
 
-// Code-split only SignUp page
 const SignUp = lazy(() => import('../pages/auth/SignUp'));
 
 const AppRoutes = () => {
@@ -25,14 +24,12 @@ const AppRoutes = () => {
       }
     >
       <Routes>
-        {/* Auth Routes */}
         <Route path="/auth" element={<AuthLayout />}>
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<SignUp />} />
           <Route index element={<Navigate to="login" replace />} />
         </Route>
 
-        {/* Dashboard Routes */}
         <Route path="/" element={<DashboardLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="category" element={<Category />} />
@@ -43,7 +40,6 @@ const AppRoutes = () => {
           <Route path="wishlist" element={<Wishlist />} />
         </Route>
 
-        {/* Fallback Route */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Suspense>

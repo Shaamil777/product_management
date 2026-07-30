@@ -25,7 +25,6 @@ const Login = () => {
       ...prev,
       [name]: value,
     }));
-    // Clear field-specific backend error as the user starts typing
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
     }
@@ -58,7 +57,6 @@ const Login = () => {
     } catch (err) {
       const responseData = err?.response?.data;
 
-      // Handle backend Zod / field-level validation error array in priority order
       if (responseData?.errors && Array.isArray(responseData.errors)) {
         const fieldErrors = {};
         responseData.errors.forEach((item) => {
@@ -73,7 +71,6 @@ const Login = () => {
         });
         setErrors(fieldErrors);
       } else {
-        // Handle general error messages (e.g. User is not registered, Invalid password)
         const msg =
           responseData?.message ||
           err?.message ||
@@ -87,7 +84,6 @@ const Login = () => {
 
   return (
     <div className="w-full h-dvh max-h-dvh bg-white flex flex-col lg:flex-row overflow-hidden">
-      {/* Left Side: White Sign In Form */}
       <div className="w-full lg:w-7/12 flex-1 flex flex-col justify-center items-center px-4 py-4 sm:px-8 lg:p-12 overflow-y-auto order-2 lg:order-1">
         <div className="w-full max-w-sm text-center">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-amber-500 mb-4 sm:mb-6 lg:mb-8 tracking-tight">
@@ -127,7 +123,11 @@ const Login = () => {
               error={errors.password}
             />
 
-      
+            <div className="mt-1 mb-4 sm:mb-6 text-center">
+              <span className="text-xs sm:text-sm font-semibold underline text-slate-800 hover:text-amber-600 transition-colors cursor-pointer">
+                forgot password?
+              </span>
+            </div>
 
             <div>
               <button
@@ -142,7 +142,6 @@ const Login = () => {
         </div>
       </div>
 
-      {/* Right Side: Dark Navy Blue Hello Friend Banner */}
       <AuthBanner
         title="Hello Friend!"
         subtitle="Enter your personal details and start your journey with us"

@@ -13,20 +13,11 @@ const AuthBanner = ({
 
   return (
     <div className={`relative overflow-hidden w-full lg:w-5/12 bg-gradient-to-b from-[#064266] via-[#053b5c] to-[#042841] text-white flex flex-col justify-center items-center py-6 px-6 sm:py-8 sm:px-8 lg:p-12 h-auto shrink-0 lg:h-full select-none ${className}`}>
-      {/* Decorative Geometric Shapes matching the mockup */}
-      {/* Top Diamond Shape */}
       <div className="absolute top-10 left-1/4 w-16 h-16 bg-[#0a527c]/40 rotate-45 rounded-sm pointer-events-none transform -translate-x-1/2" />
-      
-      {/* Large Triangle/Diamond Shape on middle right */}
       <div className="absolute top-1/3 -right-12 w-48 h-48 bg-[#0a527c]/30 rotate-12 pointer-events-none" />
-      
-      {/* Bottom Left Circle Arc Shape */}
       <div className="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-gradient-to-tr from-[#0a527c]/40 to-transparent pointer-events-none" />
-
-      {/* Small Bottom Right Rotated Rectangle */}
       <div className="absolute bottom-16 left-3/4 w-12 h-6 bg-[#0a527c]/50 -rotate-45 rounded-xs pointer-events-none" />
 
-      {/* Content Container */}
       <div className="relative z-10 max-w-sm text-center flex flex-col items-center">
         <h2 className="text-2xl sm:text-3xl lg:text-[40px] font-extrabold tracking-tight mb-2 sm:mb-3 lg:mb-4 text-white">
           {title}
