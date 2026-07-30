@@ -123,11 +123,6 @@ const Login = () => {
               error={errors.password}
             />
 
-            <div className="mt-1 mb-4 sm:mb-6 text-center">
-              <span className="text-xs sm:text-sm font-semibold underline text-slate-800 hover:text-amber-600 transition-colors cursor-pointer">
-                forgot password?
-              </span>
-            </div>
 
             <div>
               <button

@@ -156,9 +156,37 @@ export const updateProductService = async (id,productData,image,images = [])=>{
     product.subCategory = subCategory
     product.variants = variants
     if (images && images.length > 0) {
+        const oldImages = new Set([
+            product.image,
+            ...(Array.isArray(product.images) ? product.images : [])
+        ]);
+        for (const oldImg of oldImages) {
+            if (oldImg && !images.includes(oldImg)) {
+                const imagePath = path.join(process.cwd(), oldImg);
+                if (fs.existsSync(imagePath)) {
+                    try {
+                        fs.unlinkSync(imagePath);
+                    } catch (e) {}
+                }
+            }
+        }
         product.images = images;
         product.image = images[0];
     } else if (image) {
+        const oldImages = new Set([
+            product.image,
+            ...(Array.isArray(product.images) ? product.images : [])
+        ]);
+        for (const oldImg of oldImages) {
+            if (oldImg && oldImg !== image) {
+                const imagePath = path.join(process.cwd(), oldImg);
+                if (fs.existsSync(imagePath)) {
+                    try {
+                        fs.unlinkSync(imagePath);
+                    } catch (e) {}
+                }
+            }
+        }
         product.image = image;
         product.images = [image];
     }
@@ -172,10 +200,19 @@ export const deleteProductService = async (id)=>{
         throw new Error("product not found")
     }
 
-    if(product.image){
-        const imagePath = path.join(process.cwd(),product.image);
-        if(fs.existsSync(imagePath)){
-            fs.unlinkSync(imagePath)
+    const allImages = new Set([
+        product.image,
+        ...(Array.isArray(product.images) ? product.images : [])
+    ]);
+
+    for (const img of allImages) {
+        if (img) {
+            const imagePath = path.join(process.cwd(), img);
+            if (fs.existsSync(imagePath)) {
+                try {
+                    fs.unlinkSync(imagePath);
+                } catch (e) {}
+            }
         }
     }
 

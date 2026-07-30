@@ -88,9 +88,7 @@ const Product = () => {
         );
         setIsWishlisted(inWish);
       }
-    } catch (err) {
-      // ignore
-    }
+    } catch (err) {}
   }, [id]);
 
   useEffect(() => {

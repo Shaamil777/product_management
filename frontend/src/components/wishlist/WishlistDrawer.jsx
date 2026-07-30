@@ -46,9 +46,7 @@ const WishlistDrawer = ({ isOpen, onClose, onWishlistChange }) => {
         onWishlistChange?.(updated.length);
         return updated;
       });
-    } catch (err) {
-      // Ignore or show temporary error
-    }
+    } catch (err) {}
   };
 
   const handleItemClick = (productId) => {
@@ -67,7 +65,6 @@ const WishlistDrawer = ({ isOpen, onClose, onWishlistChange }) => {
         className="w-full max-w-sm sm:max-w-md bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Dark Header */}
         <div className="bg-[#003b5c] px-6 py-5 flex items-center justify-between text-white shrink-0 shadow-sm">
           <div className="flex items-center">
             <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-800 shadow-sm shrink-0">
@@ -86,7 +83,6 @@ const WishlistDrawer = ({ isOpen, onClose, onWishlistChange }) => {
           </button>
         </div>
 
-        {/* Content Body */}
         <div className="flex-1 overflow-y-auto p-6">
           {loading ? (
             <div className="flex flex-col items-center justify-center h-64">

@@ -80,7 +80,7 @@ const Navbar = ({ searchTerm = '', onSearchChange }) => {
             to="/"
             className="text-xl sm:text-2xl font-extrabold tracking-tight text-white hover:opacity-90 transition-opacity shrink-0"
           >
-            Product <span className="text-amber-400">Manage</span>
+            Product <span className="text-amber-400">Management</span>
           </Link>
 
           <form
@@ -165,7 +165,6 @@ const Navbar = ({ searchTerm = '', onSearchChange }) => {
           </div>
         </div>
 
-        {/* Mobile Search Input */}
         <div className="mt-3 md:hidden">
           <form onSubmit={handleSearchSubmit} className="relative">
             <input
