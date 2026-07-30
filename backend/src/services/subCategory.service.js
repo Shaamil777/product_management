@@ -1,4 +1,5 @@
 import Category from "../models/Category.js";
+import product from "../models/Product.js";
 import SubCategory from "../models/SubCategory.js";
 
 export const createSubCategoryService = async({name,category})=>{
@@ -68,6 +69,13 @@ export const deleteSubCategoryService=async(id)=>{
     const subCategory = await SubCategory.findById(id);
     if(!subCategory){
         throw new Error("Sub-category not found")
+    }
+    const hasProduct = await product.exists({
+        subCategory:id
+    })
+
+    if(hasProduct){
+        throw new Error("Sub-category cannot be deleted as it has products")
     }
     await subCategory.deleteOne()
     return true
