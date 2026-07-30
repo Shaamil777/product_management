@@ -1,10 +1,11 @@
+import mongoose from "mongoose";
 import Category from "../models/Category.js";
 import SubCategory from "../models/SubCategory.js";
 import Product from "../models/Product.js";
 import path from "path"
 import fs from "fs"
 
-export const createProductService = async(productData,image)=>{
+export const createProductService = async(productData,image,images = [])=>{
     const {name,description,category,subCategory,variants} = productData
 
     const existingCategory = await Category.findById(category)
@@ -44,7 +45,8 @@ export const createProductService = async(productData,image)=>{
     const product = await Product.create({
         name:name.trim(),
         description:description.trim(),
-        image,
+        image: image || (images && images.length > 0 ? images[0] : null),
+        images: images && images.length > 0 ? images : (image ? [image] : []),
         category,
         subCategory,
         variants
@@ -105,7 +107,7 @@ export const getAllProductByIdService = async (id)=>{
     return product
 }
 
-export const updateProductService = async (id,productData,image)=>{
+export const updateProductService = async (id,productData,image,images = [])=>{
     const {name,description,category,subCategory,variants} = productData
 
     const product = await Product.findById(id)
@@ -153,8 +155,12 @@ export const updateProductService = async (id,productData,image)=>{
     product.category = category
     product.subCategory = subCategory
     product.variants = variants
-    if(image){
-        product.image = image
+    if (images && images.length > 0) {
+        product.images = images;
+        product.image = images[0];
+    } else if (image) {
+        product.image = image;
+        product.images = [image];
     }
     await product.save()
     return product

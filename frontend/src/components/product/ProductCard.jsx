@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Heart, Star, Pencil, Trash2 } from 'lucide-react';
 import { getImageUrl } from '../../utils/image';
 import { toggleWishlist } from '../../api/wishlist.api';
@@ -11,6 +12,7 @@ const ProductCard = ({
   onEdit,
   onDelete,
 }) => {
+  const navigate = useNavigate();
   const [isWishlisted, setIsWishlisted] = useState(inWishlist);
   const [toggling, setToggling] = useState(false);
 
@@ -46,7 +48,10 @@ const ProductCard = ({
   };
 
   return (
-    <div className="border border-slate-200 rounded-2xl p-4 shadow-xs hover:shadow-md transition-all duration-300 bg-white relative group flex flex-col justify-between">
+    <div
+      onClick={() => navigate(`/product/${product?._id}`)}
+      className="border border-slate-200 rounded-2xl p-4 shadow-xs hover:shadow-md transition-all duration-300 bg-white relative group flex flex-col justify-between cursor-pointer"
+    >
       <div className="absolute top-4 left-4 z-10 flex items-center gap-1.5">
         <button
           type="button"

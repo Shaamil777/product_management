@@ -17,10 +17,12 @@ const EditProductModal = ({
     description: '',
     category: '',
     subCategory: '',
-    price: '',
-    ram: '8',
-    quantity: '10',
   });
+
+  const [variants, setVariants] = useState([
+    { ram: '4', price: '529.99', quantity: 1 },
+  ]);
+
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
   const [loading, setLoading] = useState(false);
@@ -35,10 +37,6 @@ const EditProductModal = ({
 
   useEffect(() => {
     if (product) {
-      const firstVariant =
-        product.variants && product.variants.length > 0
-          ? product.variants[0]
-          : {};
       const catId =
         typeof product.category === 'object'
           ? product.category?._id
@@ -53,10 +51,18 @@ const EditProductModal = ({
         description: product.description || '',
         category: catId || '',
         subCategory: subCatId || '',
-        price: String(firstVariant.price || product.price || ''),
-        ram: String(firstVariant.ram || '8'),
-        quantity: String(firstVariant.quantity || '10'),
       });
+
+      const prodVariants =
+        product.variants && product.variants.length > 0
+          ? product.variants.map((v) => ({
+              ram: String(v.ram || '8'),
+              price: String(v.price || product.price || '0'),
+              quantity: Number(v.quantity || 10),
+            }))
+          : [{ ram: '8', price: String(product.price || '0'), quantity: 10 }];
+
+      setVariants(prodVariants);
       setImagePreview(getImageUrl(product.image));
       setImageFile(null);
       setError('');
@@ -76,6 +82,23 @@ const EditProductModal = ({
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     setError('');
+  };
+
+  const handleVariantChange = (index, field, value) => {
+    setVariants((prev) => {
+      const copy = [...prev];
+      copy[index] = { ...copy[index], [field]: value };
+      return copy;
+    });
+    setError('');
+  };
+
+  const handleAddVariant = () => {
+    setVariants((prev) => [...prev, { ram: '16', price: '', quantity: 1 }]);
+  };
+
+  const handleRemoveVariant = (index) => {
+    setVariants((prev) => prev.filter((_, idx) => idx !== index));
   };
 
   const handleImageChange = (e) => {
@@ -110,8 +133,15 @@ const EditProductModal = ({
       setError('Please select a subcategory');
       return;
     }
-    if (!formData.price || Number(formData.price) <= 0) {
-      setError('Price must be greater than 0');
+
+    const validVariants = variants.map((v) => ({
+      ram: String(v.ram).trim() || '8',
+      price: Number(v.price) || 0,
+      quantity: Number(v.quantity) || 0,
+    }));
+
+    if (validVariants.some((v) => !v.ram || v.price <= 0)) {
+      setError('Please provide a valid RAM and Price (> 0) for each variant');
       return;
     }
 
@@ -123,16 +153,7 @@ const EditProductModal = ({
     fd.append('description', formData.description.trim());
     fd.append('category', formData.category);
     fd.append('subCategory', formData.subCategory);
-    fd.append(
-      'variants',
-      JSON.stringify([
-        {
-          ram: String(formData.ram).trim() || '8',
-          price: Number(formData.price),
-          quantity: Number(formData.quantity) || 1,
-        },
-      ])
-    );
+    fd.append('variants', JSON.stringify(validVariants));
     if (imageFile) {
       fd.append('image', imageFile);
     }
@@ -159,201 +180,237 @@ const EditProductModal = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl relative animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
-          <h3 className="text-lg font-bold text-[#003b5c]">Edit Product</h3>
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-50 transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+      <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-xl relative animate-in fade-in zoom-in duration-200 max-h-[92vh] overflow-y-auto">
+        <h3 className="text-xl font-bold text-slate-700 text-center mb-8">
+          Edit Product
+        </h3>
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-6 right-6 text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100 transition-colors"
+        >
+          <X className="w-5 h-5" />
+        </button>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 text-xs rounded-xl font-medium animate-in fade-in">
+          <div className="mb-6 p-3 bg-red-50 border border-red-200 text-red-600 text-xs sm:text-sm font-semibold rounded-lg text-center">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
-              Product Name *
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+            <label className="w-32 shrink-0 text-sm font-medium text-slate-400">
+              Title :
             </label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
-              placeholder="e.g. Acer Aspire Go 15"
-              className="w-full py-2 px-3 border border-slate-300 rounded-lg text-sm text-slate-800 focus:outline-none focus:border-amber-500"
+              placeholder="HP AMD Ryzen 3"
+              className="flex-1 py-2.5 px-4 border border-slate-300 rounded-xl text-sm font-medium text-slate-700 bg-white focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
               required
             />
           </div>
 
-          <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
-              Description *
+          <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
+            <label className="w-32 shrink-0 text-sm font-medium text-slate-400 pt-2.5">
+              Description :
             </label>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleChange}
-              placeholder="Provide detailed description of the product..."
-              rows={3}
-              className="w-full py-2 px-3 border border-slate-300 rounded-lg text-sm text-slate-800 focus:outline-none focus:border-amber-500"
+              rows="2"
+              placeholder="Detailed description (min 10 characters)"
+              className="flex-1 py-2.5 px-4 border border-slate-300 rounded-xl text-sm font-medium text-slate-700 bg-white focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
               required
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
-                Category *
-              </label>
-              <select
-                name="category"
-                value={formData.category}
-                onChange={(e) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    category: e.target.value,
-                    subCategory: '',
-                  }));
-                }}
-                className="w-full py-2 px-3 border border-slate-300 rounded-lg text-sm text-slate-800 focus:outline-none focus:border-amber-500 bg-white"
-                required
-              >
-                <option value="">Select Category</option>
-                {categories.map((cat) => (
-                  <option key={cat._id} value={cat._id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
-                Subcategory *
-              </label>
-              <select
-                name="subCategory"
-                value={formData.subCategory}
-                onChange={handleChange}
-                disabled={!formData.category}
-                className="w-full py-2 px-3 border border-slate-300 rounded-lg text-sm text-slate-800 focus:outline-none focus:border-amber-500 bg-white disabled:bg-slate-100"
-                required
-              >
-                <option value="">Select Subcategory</option>
-                {filteredSubCategories.map((sub) => (
-                  <option key={sub._id} value={sub._id}>
-                    {sub.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3">
-            <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
-                Price (₹) *
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                name="price"
-                value={formData.price}
-                onChange={handleChange}
-                placeholder="45000"
-                className="w-full py-2 px-3 border border-slate-300 rounded-lg text-sm text-slate-800 focus:outline-none focus:border-amber-500"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
-                RAM (GB) *
-              </label>
-              <input
-                type="number"
-                min="1"
-                name="ram"
-                value={formData.ram}
-                onChange={handleChange}
-                placeholder="8"
-                className="w-full py-2 px-3 border border-slate-300 rounded-lg text-sm text-slate-800 focus:outline-none focus:border-amber-500"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
-                Quantity *
-              </label>
-              <input
-                type="number"
-                name="quantity"
-                value={formData.quantity}
-                onChange={handleChange}
-                placeholder="10"
-                className="w-full py-2 px-3 border border-slate-300 rounded-lg text-sm text-slate-800 focus:outline-none focus:border-amber-500"
-                required
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
-              Product Image (Multer Upload)
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+            <label className="w-32 shrink-0 text-sm font-medium text-slate-400">
+              Category :
             </label>
-            <div className="border-2 border-dashed border-slate-300 rounded-xl p-4 text-center hover:border-amber-500 transition-colors cursor-pointer bg-slate-50 relative">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              />
+            <select
+              name="category"
+              value={formData.category}
+              onChange={(e) => {
+                handleChange(e);
+                setFormData((prev) => ({ ...prev, subCategory: '' }));
+              }}
+              className="flex-1 py-2.5 px-4 border border-slate-300 rounded-xl text-sm font-medium text-slate-700 bg-white focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 cursor-pointer"
+              required
+            >
+              <option value="">-- Select Category --</option>
+              {categories.map((cat) => (
+                <option key={cat._id} value={cat._id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+            <label className="w-32 shrink-0 text-sm font-medium text-slate-400">
+              Sub category :
+            </label>
+            <select
+              name="subCategory"
+              value={formData.subCategory}
+              onChange={handleChange}
+              disabled={!formData.category}
+              className="flex-1 py-2.5 px-4 border border-slate-300 rounded-xl text-sm font-medium text-slate-700 bg-white focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 disabled:bg-slate-50 cursor-pointer"
+              required
+            >
+              <option value="">-- Select Subcategory --</option>
+              {filteredSubCategories.map((sub) => (
+                <option key={sub._id} value={sub._id}>
+                  {sub.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
+            <label className="w-32 shrink-0 text-sm font-medium text-slate-400 pt-2">
+              Variants :
+            </label>
+            <div className="flex-1 space-y-2">
+              {variants.map((v, idx) => (
+                <div
+                  key={idx}
+                  className="flex flex-wrap items-center gap-1.5 sm:gap-2"
+                >
+                  <span className="text-xs font-medium text-slate-400">
+                    Ram:
+                  </span>
+                  <input
+                    type="text"
+                    value={v.ram}
+                    onChange={(e) =>
+                      handleVariantChange(idx, 'ram', e.target.value)
+                    }
+                    placeholder="4"
+                    className="w-16 sm:w-20 py-1.5 px-2 border border-slate-300 rounded-xl text-sm font-semibold text-slate-700 text-center bg-white focus:outline-none focus:border-amber-500"
+                    required
+                  />
+
+                  <span className="text-xs font-medium text-slate-400 ml-1">
+                    Price:
+                  </span>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={v.price}
+                    onChange={(e) =>
+                      handleVariantChange(idx, 'price', e.target.value)
+                    }
+                    placeholder="529.99"
+                    className="w-24 sm:w-28 py-1.5 px-2 border border-slate-300 rounded-xl text-sm font-semibold text-slate-700 text-center bg-white focus:outline-none focus:border-amber-500"
+                    required
+                  />
+
+                  <span className="text-xs font-medium text-slate-400 ml-1">
+                    QTY:
+                  </span>
+                  <div className="flex items-center justify-between border border-slate-300 rounded-xl px-2 py-1 bg-white w-24">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleVariantChange(
+                          idx,
+                          'quantity',
+                          Math.max(0, Number(v.quantity) - 1)
+                        )
+                      }
+                      className="w-5 h-5 flex items-center justify-center text-slate-400 hover:text-slate-600 font-bold text-xs"
+                    >
+                      &lt;
+                    </button>
+                    <span className="text-sm font-semibold text-slate-700">
+                      {v.quantity}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleVariantChange(
+                          idx,
+                          'quantity',
+                          Number(v.quantity) + 1
+                        )
+                      }
+                      className="w-5 h-5 flex items-center justify-center text-slate-400 hover:text-slate-600 font-bold text-xs"
+                    >
+                      &gt;
+                    </button>
+                  </div>
+
+                  {variants.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveVariant(idx)}
+                      className="text-slate-300 hover:text-red-500 p-1 ml-1 cursor-pointer"
+                      title="Remove variant"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              ))}
+
+              <button
+                type="button"
+                onClick={handleAddVariant}
+                className="bg-slate-800 hover:bg-slate-900 active:bg-black text-white text-xs font-semibold px-4 py-2 rounded-xl transition-colors ml-auto block shadow-xs cursor-pointer mt-2"
+              >
+                Add variants
+              </button>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 pt-1">
+            <label className="w-32 shrink-0 text-sm font-medium text-slate-400">
+              Upload image:
+            </label>
+            <div className="flex items-center gap-3">
               {imagePreview ? (
-                <div className="flex flex-col items-center">
+                <div className="w-20 h-20 border border-slate-300 rounded-xl p-1.5 flex items-center justify-center bg-white shadow-2xs relative group">
                   <img
                     src={imagePreview}
                     alt="Preview"
-                    className="h-28 object-contain rounded-lg mb-2"
+                    className="max-h-full max-w-full object-contain rounded-lg"
                   />
-                  <span className="text-xs text-slate-600 font-medium">
-                    Click to replace image
-                  </span>
                 </div>
-              ) : (
-                <div className="flex flex-col items-center py-2">
-                  <Upload className="w-8 h-8 text-slate-400 mb-1" />
-                  <span className="text-xs font-semibold text-slate-700">
-                    Click or drag image to replace
-                  </span>
-                  <span className="text-[10px] text-slate-500 mt-0.5">
-                    PNG, JPG, WEBP up to 2MB
-                  </span>
-                </div>
-              )}
+              ) : null}
+
+              <label className="w-20 h-20 border-2 border-dashed border-slate-300 hover:border-amber-500 rounded-xl flex items-center justify-center cursor-pointer transition-colors bg-white relative">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+                <span className="text-slate-400 hover:text-amber-500 text-2xl font-bold">
+                  +
+                </span>
+              </label>
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
+          <div className="flex justify-end gap-3 pt-6">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2 text-xs font-semibold text-slate-600 hover:text-slate-800 border border-slate-300 rounded-full hover:bg-slate-50 transition-colors"
+              className="px-6 py-2.5 text-xs font-semibold text-slate-600 hover:text-slate-800 border border-slate-300 rounded-full hover:bg-slate-50 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 active:bg-amber-700 rounded-full transition-colors shadow-sm disabled:opacity-50 flex items-center gap-1.5"
+              className="px-7 py-2.5 text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 active:bg-amber-700 rounded-full transition-colors shadow-sm disabled:opacity-50 flex items-center gap-1.5"
             >
               {loading && <LoadingSpinner size="sm" />}
               <span>Update Product</span>

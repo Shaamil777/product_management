@@ -5,10 +5,15 @@ import { createProduct,deleteProduct,getAllProducts, getProductById, updateProdu
 
 const router = express.Router();
 
-router.post("/",authMiddleware,upload.single("image"),createProduct);
+const multiUpload = upload.fields([
+  { name: "image", maxCount: 1 },
+  { name: "images", maxCount: 10 },
+]);
+
+router.post("/",authMiddleware,multiUpload,createProduct);
 router.get("/",getAllProducts);
 router.get("/:id",getProductById)
-router.put("/:id",authMiddleware,upload.single("image"),updateProduct)
+router.put("/:id",authMiddleware,multiUpload,updateProduct)
 router.delete("/:id",authMiddleware,deleteProduct)
 
 export default router;

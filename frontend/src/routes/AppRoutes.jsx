@@ -34,7 +34,7 @@ const AppRoutes = () => {
           <Route index element={<Dashboard />} />
           <Route path="category" element={<Category />} />
           <Route path="subcategory" element={<SubCategory />} />
-          <Route path="product" element={<Product />} />
+          <Route path="product/:id" element={<Product />} />
           <Route path="product/add" element={<AddProduct />} />
           <Route path="product/edit/:id" element={<EditProduct />} />
           <Route path="wishlist" element={<Wishlist />} />
