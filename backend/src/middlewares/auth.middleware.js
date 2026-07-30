@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken"
 import User from "../models/User.js"
 
+// Verify Bearer token from request headers and attach authenticated user to request
 const authMiddleware = async(req,res,next)=>{
     try {
         const authHeader = req.headers.authorization
@@ -40,4 +41,4 @@ const authMiddleware = async(req,res,next)=>{
     }
 }
 
-export default authMiddleware
+export default authMiddleware

@@ -2,6 +2,7 @@ import Category from "../models/Category.js";
 import product from "../models/Product.js";
 import SubCategory from "../models/SubCategory.js";
 
+// Create a new sub-category under a specific category after duplicate checks
 export const createSubCategoryService = async({name,category})=>{
     const existingCategory = await Category.findById(category);
     if(!existingCategory){
@@ -26,6 +27,7 @@ export const createSubCategoryService = async({name,category})=>{
     return subCategory
 }
 
+// Fetch all sub-categories, optionally filtered by category ID
 export const getAllSubCategoriesService = async(categoryId)=>{
     const filter={}
     if(categoryId){
@@ -36,6 +38,7 @@ export const getAllSubCategoriesService = async(categoryId)=>{
     return subCategories
 }
 
+// Update sub-category name and parent category after checking for duplicates
 export const updateSubCategoryService = async(id,{name,category})=>{
     const subCategory = await SubCategory.findById(id)
     if(!subCategory){
@@ -65,11 +68,13 @@ export const updateSubCategoryService = async(id,{name,category})=>{
     return subCategory
 }
 
+// Delete a sub-category only if no products are linked to it
 export const deleteSubCategoryService=async(id)=>{
     const subCategory = await SubCategory.findById(id);
     if(!subCategory){
         throw new Error("Sub-category not found")
     }
+    // Protect referential integrity: prevent deleting if products exist
     const hasProduct = await product.exists({
         subCategory:id
     })
@@ -79,4 +84,4 @@ export const deleteSubCategoryService=async(id)=>{
     }
     await subCategory.deleteOne()
     return true
-}
+}

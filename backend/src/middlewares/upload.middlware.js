@@ -8,6 +8,7 @@ if(!fs.existsSync(uploadPath)){
     fs.mkdirSync(uploadPath,{recursive:true})
 }
 
+// Configure local disk storage destination and unique filename generation
 const storage = multer.diskStorage({
     destination:(req,file,callback)=>{
         callback(null,uploadPath)
@@ -18,6 +19,7 @@ const storage = multer.diskStorage({
     }
 })
 
+// Only allow valid image formats (JPEG, JPG, PNG, WEBP)
 const fileFilter = (req,file,callback)=>{
     const allowedType = [
         "image/jpeg",
@@ -33,6 +35,7 @@ const fileFilter = (req,file,callback)=>{
     }
 };
 
+// Multer middleware instance with a 2MB file size limit
 const upload = multer({
     storage,
     fileFilter,
@@ -41,4 +44,4 @@ const upload = multer({
     }
 })
 
-export default upload
+export default upload

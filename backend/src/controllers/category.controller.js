@@ -2,6 +2,7 @@ import { success } from "zod";
 import { createCategoryService, deleteCategoryService, getAllCategoriesService, updateCategoryService } from "../services/category.service.js";
 import { categorySchema } from "../validators/category.validator.js";
 
+// Validate request payload and create a new category
 export const createCategory = async(req,res,next)=>{
     try {
         const validatedData = categorySchema.parse(req.body)
@@ -16,6 +17,7 @@ export const createCategory = async(req,res,next)=>{
     }
 }
 
+// Retrieve all categories and send as JSON response
 export const getAllCategories = async(req,res,next)=>{
     try {
         const response = await getAllCategoriesService()
@@ -29,6 +31,7 @@ export const getAllCategories = async(req,res,next)=>{
     }
 }
 
+// Validate request payload and update category by ID
 export const updateCategory = async(req,res,next)=>{
     try {
         const validatedData = categorySchema.parse(req.body)
@@ -44,6 +47,7 @@ export const updateCategory = async(req,res,next)=>{
     }
 }
 
+// Delete a category by ID after referential integrity checks
 export const deleteCategory = async(req,res,next)=>{
     try {
         await deleteCategoryService(req.params.id)
@@ -54,4 +58,4 @@ export const deleteCategory = async(req,res,next)=>{
     } catch (error) {
         next(error)
     }
-}
+}

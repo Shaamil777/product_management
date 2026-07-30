@@ -1,6 +1,7 @@
 import {productSchema}  from "../validators/Product.validator.js";
 import { createProductService,deleteProductService,getAllProductByIdService,getAllProductsService,updateProductService } from "../services/product.service.js";
 
+// Helper function to extract uploaded image paths from request files
 const getUploadedImages = (req) => {
     let list = [];
     if (req.files && req.files.images && req.files.images.length > 0) {
@@ -13,6 +14,7 @@ const getUploadedImages = (req) => {
     return list;
 };
 
+// Parse product variants and image files, then create a new product
 export const createProduct = async(req,res,next)=>{
     try {
         if(req.body.variants){
@@ -33,6 +35,7 @@ export const createProduct = async(req,res,next)=>{
     }
 }
 
+// Fetch paginated products based on search and category filters
 export const getAllProducts = async(req,res,next)=>{
     try {
         const products = await getAllProductsService(req.query)
@@ -46,6 +49,7 @@ export const getAllProducts = async(req,res,next)=>{
     }
 }
 
+// Fetch detailed information of a single product by ID
 export const getProductById = async (req,res,next)=>{
     try {
         const product = await getAllProductByIdService(req.params.id)
@@ -59,6 +63,7 @@ export const getProductById = async (req,res,next)=>{
     }
 }
 
+// Validate input payload and uploaded images, then update product by ID
 export const updateProduct = async(req,res,next)=>{
     try {
         if(req.body.variants){
@@ -80,6 +85,7 @@ export const updateProduct = async(req,res,next)=>{
     }
 }
 
+// Delete a product by ID and remove its stored image files
 export const deleteProduct = async (req,res,next)=>{
     try {
         await deleteProductService(req.params.id)
@@ -91,4 +97,4 @@ export const deleteProduct = async (req,res,next)=>{
     } catch (error) {
         next(error)
     }
-}
+}

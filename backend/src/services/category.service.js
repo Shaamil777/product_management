@@ -1,6 +1,7 @@
 import Category from "../models/Category.js";
 import SubCategory from "../models/SubCategory.js";
 
+// Create a new category after checking if it already exists
 export const createCategoryService = async({name})=>{
     const existingCategory = await Category.findOne({name:{$regex:new RegExp(`${name.trim()}$`,"i")}})
     if(existingCategory){
@@ -12,11 +13,13 @@ export const createCategoryService = async({name})=>{
     return category
 }
 
+// Fetch all categories from the database
 export const getAllCategoriesService = async()=>{
     const categories = await Category.find()
     return categories
 }
 
+// Update an existing category name after checking for duplicates
 export const updateCategoryService = async(id,{name})=>{
     const existingCategory = await Category.findOne({
         name:{$regex:new RegExp(`${name.trim()}$`,"i")},
@@ -34,12 +37,14 @@ export const updateCategoryService = async(id,{name})=>{
     return category
 }
 
+// Delete a category only if no sub-categories belong to it
 export const deleteCategoryService = async(id)=>{
     const category = await Category.findById(id)
     if(!category){
         throw new Error("Category not found")
     }
 
+    // Protect referential integrity: prevent deleting if sub-categories exist
     const hasSubCategories = await SubCategory.exists({
         category:id,
     })
@@ -52,3 +57,4 @@ export const deleteCategoryService = async(id)=>{
     return category
     
 }
+

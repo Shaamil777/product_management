@@ -1,6 +1,7 @@
 import { signupService , loginService } from "../services/auth.service.js";
 import { loginSchema, signupSchema } from "../validators/auth.validator.js";
 
+// Handle user signup request, validate input data, and return auth token
 export const signup = async (req,res,next)=>{
     try {
         const validatedData = signupSchema.parse(req.body)
@@ -17,6 +18,7 @@ export const signup = async (req,res,next)=>{
     }
 }
 
+// Handle user login request, validate credentials, and return auth token
 export const login = async (req,res,next)=>{
     try {
         const validatedData = loginSchema.parse(req.body)
@@ -31,4 +33,4 @@ export const login = async (req,res,next)=>{
     } catch (error) {
         next(error)
     }
-}
+}

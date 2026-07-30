@@ -1,5 +1,6 @@
 import { ZodError } from "zod";
 
+// Global error handler for formatting Zod validation errors and HTTP error responses
 const errorHandler = (err,req,res,next)=>{
     if(err instanceof ZodError){
         const formattedErrors = err.issues.map((issue) => ({
@@ -19,4 +20,4 @@ const errorHandler = (err,req,res,next)=>{
     })
 }
 
-export default errorHandler
+export default errorHandler

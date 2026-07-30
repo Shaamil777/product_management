@@ -1,5 +1,6 @@
 import { getWishlistService, toggleWishlistService } from "../services/wishlist.service.js";
 
+// Toggle product in the logged-in user's wishlist
 export const toggleWishlist = async (req,res,next)=>{
     try {
         const response = await toggleWishlistService(req.user._id,req.params.productId)
@@ -13,6 +14,7 @@ export const toggleWishlist = async (req,res,next)=>{
     }
 }
 
+// Retrieve the logged-in user's wishlist and return as JSON
 export const getWishlist = async (req,res,next)=>{
     try {
         const wishlist = await getWishlistService(req.user._id);
@@ -24,4 +26,4 @@ export const getWishlist = async (req,res,next)=>{
     } catch (error) {
         next(error)
     }
-}
+}

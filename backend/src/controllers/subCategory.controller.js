@@ -1,6 +1,7 @@
 import { createSubCategoryService, deleteSubCategoryService, getAllSubCategoriesService, updateSubCategoryService } from "../services/subCategory.service.js";
 import { subCategorySchema } from "../validators/subCategory.validator.js";
 
+// Validate input data and create a new sub-category
 export const createSubCategory = async(req,res,next)=>{
     try {
         const validatedData = subCategorySchema.parse(req.body)
@@ -15,6 +16,7 @@ export const createSubCategory = async(req,res,next)=>{
     }
 }
 
+// Retrieve all sub-categories, optionally filtered by parent category ID
 export const getAllSubCategories = async (req,res,next)=>{
     try {
         const {category} = req.query;
@@ -28,6 +30,7 @@ export const getAllSubCategories = async (req,res,next)=>{
     }
 }
 
+// Validate input data and update a sub-category by ID
 export const updateSubCategory = async(req,res,next)=>{
     try {
         const {id} = req.params;
@@ -43,6 +46,7 @@ export const updateSubCategory = async(req,res,next)=>{
     }
 }
 
+// Delete a sub-category by ID after checking no products depend on it
 export const deleteSubCategory = async(req,res,next)=>{
     try {
         await deleteSubCategoryService(req.params.id)
@@ -54,4 +58,5 @@ export const deleteSubCategory = async(req,res,next)=>{
         next(error)
     }
 }
+
 

@@ -5,6 +5,7 @@ import Product from "../models/Product.js";
 import path from "path"
 import fs from "fs"
 
+// Create a new product after validating category, sub-category, and RAM variants
 export const createProductService = async(productData,image,images = [])=>{
     const {name,description,category,subCategory,variants} = productData
 
@@ -55,6 +56,7 @@ export const createProductService = async(productData,image,images = [])=>{
 }
 
 
+// Fetch paginated products with search and category filtering
 export const getAllProductsService = async (query)=>{
     const {search,category,subCategory,page=1,limit=10}=query
 
@@ -93,6 +95,7 @@ export const getAllProductsService = async (query)=>{
     }
 }
 
+// Fetch a single product by its ID with populated category names
 export const getAllProductByIdService = async (id)=>{
     if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new Error("Invalid product ID");
@@ -107,6 +110,7 @@ export const getAllProductByIdService = async (id)=>{
     return product
 }
 
+// Update product details and replace old uploaded images if new ones are provided
 export const updateProductService = async (id,productData,image,images = [])=>{
     const {name,description,category,subCategory,variants} = productData
 
@@ -194,6 +198,7 @@ export const updateProductService = async (id,productData,image,images = [])=>{
     return product
 }
 
+// Delete a product from the database and remove its image files from server storage
 export const deleteProductService = async (id)=>{
     const product = await Product.findById(id)
     if(!product){
@@ -218,4 +223,4 @@ export const deleteProductService = async (id)=>{
 
     await product.deleteOne()
     return product
-}
+}

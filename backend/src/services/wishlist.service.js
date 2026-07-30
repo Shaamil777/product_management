@@ -2,7 +2,7 @@
 import Product from "../models/Product.js";
 import Wishlist from "../models/Wishlist.js";
 
-
+// Add or remove a product from the user's wishlist
 export const toggleWishlistService = async(userId,productId)=>{
     const product = await Product.findById(productId)
     if(!product){
@@ -47,6 +47,7 @@ export const toggleWishlistService = async(userId,productId)=>{
 
 }
 
+// Fetch the user's wishlist along with category and subcategory details
 export const getWishlistService = async (userId)=>{
     const wishlist = await Wishlist.findOne({
         user:userId
@@ -68,3 +69,4 @@ export const getWishlistService = async (userId)=>{
 
     return { ...wishlist?._doc, products };
 }
+
