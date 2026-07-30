@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import product from "./Product";
+import product from "./Product.js";
 
 const wishlistSchema = new mongoose.Schema({
     user:{
@@ -11,7 +11,7 @@ const wishlistSchema = new mongoose.Schema({
     products:[
         {
             type:mongoose.Schema.Types.ObjectId,
-            ref:"Product"
+            ref:"product"
         }
     ]
 },{
