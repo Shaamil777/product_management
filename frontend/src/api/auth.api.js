@@ -6,7 +6,7 @@ export const login = async (credentials) => {
 };
 
 export const register = async (userData) => {
-  const response = await api.post('/auth/register', userData);
+  const response = await api.post('/auth/signup', userData);
   return response.data;
 };
 
@@ -15,7 +15,3 @@ export const logout = async () => {
   return response.data;
 };
 
-export const getProfile = async () => {
-  const response = await api.get('/auth/profile');
-  return response.data;
-};
