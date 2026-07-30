@@ -80,7 +80,9 @@ const Product = () => {
       const token = localStorage.getItem('token');
       if (token && id) {
         const wishRes = await getWishlist().catch(() => ({ data: [] }));
-        const list = wishRes?.data || [];
+        const list =
+          wishRes?.data?.products ||
+          (Array.isArray(wishRes?.data) ? wishRes?.data : []);
         const inWish = list.some(
           (item) => item._id === id || item.id === id
         );

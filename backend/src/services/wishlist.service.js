@@ -64,5 +64,7 @@ export const getWishlistService = async (userId)=>{
         ]
     })
 
-    return wishlist || {products:[]};
+    const products = (wishlist?.products || []).filter(Boolean);
+
+    return { ...wishlist?._doc, products };
 }

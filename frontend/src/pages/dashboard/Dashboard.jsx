@@ -132,10 +132,12 @@ const Dashboard = () => {
       if (token) {
         try {
           const wishRes = await getWishlist();
-          const items = wishRes?.data?.wishlist || wishRes?.data || [];
-          const ids = Array.isArray(items)
-            ? items.map((w) => w.product?._id || w.product || w._id)
-            : [];
+          const items =
+            wishRes?.data?.products ||
+            (Array.isArray(wishRes?.data) ? wishRes?.data : []);
+          const ids = items.map(
+            (w) => w._id || w.id || w.product?._id || w.product
+          );
           setWishlistIds(ids);
         } catch (e) {
           setWishlistIds([]);
